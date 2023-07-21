@@ -9,8 +9,6 @@
 // @updateURL    https://raw.githubusercontent.com/Morels31/ita-pixel-soldier/main/ita-pixel-soldier.js
 // @downloadURL  https://raw.githubusercontent.com/Morels31/ita-pixel-soldier/main/ita-pixel-soldier.js
 // ==/UserScript==
-
-
 (async () => {
     // Check for correct page
     if (!window.location.href.startsWith('https://www.reddit.com/r/place/') && !window.location.href.startsWith('https://new.reddit.com/r/place/')) {
@@ -67,7 +65,7 @@
 
     const zs_version = "0.4";
     const zs_startButton = document.createElement('button');
-    zs_startButton.innerText = `Zinnsoldat v${zs_version}`;
+    zs_startButton.innerText = `ita-pixel-soldier v${zs_version}`;
     zs_startButton.classList.add('zs-pixeled', 'zs-button', 'zs-stopbutton');
     zs_startButton.style.setProperty('--zs_timeout', '100%');
     document.body.appendChild(zs_startButton);
@@ -168,7 +166,7 @@
         }).showToast();
     }
 
-    zs_info('Uno di noi!');
+    zs_info('Inizializzazione!');
 
     // Override setTimeout to allow getting the time left
     const _setTimeout = setTimeout; 
