@@ -1,4 +1,4 @@
-# Zinnsoldat Bookmarklet
+# Italian Pixel Soldier
 
 Used to inject the bot client into your browser.
 
