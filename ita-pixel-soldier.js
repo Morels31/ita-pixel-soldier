@@ -168,7 +168,7 @@
         }).showToast();
     }
 
-    zs_info('Einer von uns!');
+    zs_info('Uno di noi!');
 
     // Override setTimeout to allow getting the time left
     const _setTimeout = setTimeout; 
@@ -218,9 +218,9 @@
     
         return responseText.match(/"accessToken":"(\\"|[^"]*)"/)[1];
     }
-    zs_info('Erbitte Reddit um Zugriff...');
+    zs_info('Richiesta di accesso a Reddit...');
     let zs_accessToken = await zs_getAccessToken();
-    zs_success('Zugriff gewährt!');
+    zs_success('Accesso garantito!');
 
     const zs_getCanvasId = (x, y) => {
         if (y < 0 && x < -500) {
@@ -304,16 +304,16 @@
         if (data.errors !== undefined) {
             if (data.errors[0].message === 'Ratelimited') {
                 console.log('Could not place pixel at %s, %s in %s - Ratelimit', x, y, color);
-                zs_warn('Du hast noch Abklingzeit!');
+                zs_warn('Hai ancora un timeout!');
                 return data.errors[0].extensions?.nextAvailablePixelTs;
             }
             console.log('Could not place pixel at %s, %s in %s - Response error', x, y, color);
             console.error(data.errors);
-            zs_error('Fehler beim Platzieren des Pixels');
+            zs_error('Errore durante il posizionamento del pixel');
             return null;
         }
         console.log('Did place pixel at %s, %s in %s', x, y, color);
-        zs_success(`Pixel (${x}, ${y}) platziert!`);
+        zs_success(`Pixel (${x}, ${y}) piazzato!`);
         return data?.data?.act?.data?.[0]?.data?.nextAvailablePixelTimestamp;
     }
 
@@ -323,7 +323,7 @@
 
     const zs_requestJob = () => {
         if (c2.readyState !== c2.OPEN) {
-            zs_error('Verbindung zum "Carpetbomber" abgebrochen. Verbinde...');
+            zs_error('Connessione al server centrale in corso...');
             zs_initCarpetbomberConnection();
             return;
         }
@@ -335,7 +335,7 @@
 
     const zs_processJobResponse = (jobs) => {
         if (!jobs || jobs === {}) {
-            zs_warn('Kein verfügbarer Auftrag. Versuche in 60s erneut');
+            zs_warn('Nessun pixel da piazzare. Riprovo tra 60s...');
             clearTimeout(placeTimeout);
             placeTimeout = setTimeout(() => {
                 zs_requestJob();
@@ -354,7 +354,7 @@
                 return;
             }
             // Other error. No jobs left?
-            zs_warn('Kein verfügbarer Auftrag. Versuche in 20s erneut');
+            zs_warn('Nessun pixel da piazzare. Riprovo tra 20s...');
             clearTimeout(placeTimeout);
             placeTimeout = setTimeout(() => {
                 zs_requestJob();
@@ -375,14 +375,14 @@
 
         c2.onopen = () => {
             zs_initialized = true;
-            zs_info('Verbinde mit "Carpetbomber"...');
+            zs_info('Connesso con il server centrale...');
             c2.send(JSON.stringify({ type: "Handshake", version: zs_version }));
             zs_requestJob();
             setInterval(() => c2.send(JSON.stringify({ type: "Wakeup"})), 40*1000);
         }
         
         c2.onerror = (error) => {
-            zs_error('Verbindung zum "Carpetbomber" fehlgeschlagen! Versuche in 5s erneut');
+            zs_error('Connessione al server centrale fallita! Riprovo tra 5 secondi');
             console.error(error);
             setTimeout(zs_initCarpetbomberConnection, 5000);
         }
@@ -392,7 +392,7 @@
             // console.log('received: %s', JSON.stringify(data));
 
             if (data.type === 'UpdateVersion') {
-                zs_success('Verbindung aufgebaut!');
+                zs_success('Connessione stabilita!!');
                 if (data.version > zs_version) {
                     zs_updateNotification();
                 }
