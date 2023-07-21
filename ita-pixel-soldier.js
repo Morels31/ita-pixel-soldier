@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name         r/place ita-pixel-soldier
+// @name         ita-pixel-soldier
 // @namespace    http://tampermonkey.net/
 // @version      0.4
 // @description  Uno di noi!
 // @author       placeDE devs
 // @match        https://*.reddit.com/r/place/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=reddit.com
-// @updateURL    https://raw.githubusercontent.com/Morels31/ita-pixel-soldier/main/ita-pixel-soldier.js
-// @downloadURL  https://raw.githubusercontent.com/Morels31/ita-pixel-soldier/main/ita-pixel-soldier.js
+// @updateURL    https://github.com/Morels31/ita-pixel-soldier/raw/main/ita-pixel-soldier.user.js
+// @downloadURL  https://github.com/Morels31/ita-pixel-soldier/raw/main/ita-pixel-soldier.user.js
 // ==/UserScript==
 (async () => {
     // Check for correct page
