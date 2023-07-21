@@ -2,8 +2,8 @@
 // @name         ita-pixel-soldier
 // @namespace    http://tampermonkey.net/
 // @version      0.4
-// @description  Uno di noi!
-// @author       placeDE devs
+// @description  Mostriamo la nostra arte a tutti!
+// @author       Morels31
 // @match        https://*.reddit.com/r/place/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=reddit.com
 // @updateURL    https://github.com/Morels31/ita-pixel-soldier/raw/main/ita-pixel-soldier.user.js
@@ -16,12 +16,12 @@
     }
 
     // Check for marker; only load the script once!
-    if (document.head.querySelector('meta[name="zinnsoldat"]')) {
+    if (document.head.querySelector('meta[name="pixelsoldier"]')) {
         console.warn('Script already loaded!');
         return;
     }
     const marker = document.createElement('meta');
-    marker.setAttribute('name', 'zinnsoldat');
+    marker.setAttribute('name', 'pixelsoldier');
     document.head.appendChild(marker);
 
     const zs_style = document.createElement('style');
