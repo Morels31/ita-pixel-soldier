@@ -6,8 +6,8 @@
 // @author       placeDE devs
 // @match        https://*.reddit.com/r/place/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=reddit.com
-// @updateURL    https://github.com/PlaceDE-Official/zinnsoldat/raw/main/output/placebot.user.js
-// @downloadURL  https://github.com/PlaceDE-Official/zinnsoldat/raw/main/output/placebot.user.js
+// @updateURL    https://raw.githubusercontent.com/Morels31/ita-pixel-soldier/main/ita-pixel-soldier.js
+// @downloadURL  https://raw.githubusercontent.com/Morels31/ita-pixel-soldier/main/ita-pixel-soldier.js
 // ==/UserScript==
 
 
