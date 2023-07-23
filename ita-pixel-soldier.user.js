@@ -137,7 +137,7 @@
     const zs_success = (msg) => {
         Toastify({
             text: msg,
-            duration: 5000,
+            duration: 10000,
             gravity: 'bottom',
             position: 'right',
             stopOnFocus: true,
@@ -151,8 +151,8 @@
     }
     const zs_updateNotification = () => {
         Toastify({
-            text: 'Neue Version auf https://place.army/ verfügbar!',
-            destination: 'https://place.army/',
+            text: 'Clicca questo messaggio per aggiornare lo script alla nuova versione',
+            destination: 'https://github.com/Morels31/ita-pixel-soldier/raw/main/ita-pixel-soldier.user.js',
             duration: -1,
             gravity: 'bottom',
             position: 'right',
@@ -166,7 +166,7 @@
         }).showToast();
     }
 
-    zs_info('Inizializzazione!');
+    zs_info('Inizializzazione...');
 
     // Override setTimeout to allow getting the time left
     const _setTimeout = setTimeout; 
@@ -317,8 +317,6 @@
 
 
     let c2;
-    let tokens = ['Wololo']; // We only have one token
-
     const zs_requestJob = () => {
         if (c2.readyState !== c2.OPEN) {
             zs_error('Connessione al server centrale in corso...');
@@ -328,11 +326,11 @@
         if (!zs_running) {
             return;
         }
-        c2.send(JSON.stringify({ type: "RequestJobs", tokens: tokens }));
+        c2.send(JSON.stringify({ operation: "request-pixel"}));
     }
 
-    const zs_processJobResponse = (jobs) => {
-        if (!jobs || jobs === {}) {
+    const zs_processJobResponse = (job) => {
+        if (!job || job === {}) {
             zs_warn('Nessun pixel da piazzare. Riprovo tra 60s...');
             clearTimeout(placeTimeout);
             placeTimeout = setTimeout(() => {
@@ -340,7 +338,6 @@
             }, 60000);
             return;
         }
-        let [token, [job, code]] = Object.entries(jobs)[0];
         if (!job) {
             // Check if ratelimited and schedule retry
             const ratelimit = code?.Ratelimited?.until;
@@ -374,9 +371,10 @@
         c2.onopen = () => {
             zs_initialized = true;
             zs_info('Connesso con il server centrale...');
-            c2.send(JSON.stringify({ type: "Handshake", version: zs_version }));
+
+            c2.send(JSON.stringify({"operation":"handshake","data":{"platform":"browser","version":zs_version,"useraccounts":1}})JSON.stringify({ type: "Handshake", version: zs_version }));
             zs_requestJob();
-            setInterval(() => c2.send(JSON.stringify({ type: "Wakeup"})), 40*1000);
+            setInterval(() => c2.send(JSON.stringify({"operation":"ping"})), 40*1000);
         }
         
         c2.onerror = (error) => {
@@ -387,15 +385,15 @@
 
         c2.onmessage = (event) => {
             data = JSON.parse(event.data)
-            // console.log('received: %s', JSON.stringify(data));
+            console.log('received: %s', JSON.stringify(data));
 
-            if (data.type === 'UpdateVersion') {
+            if (data.operation === 'notify-update') {
                 zs_success('Connessione stabilita!!');
                 if (data.version > zs_version) {
                     zs_updateNotification();
                 }
-            } else if (data.type == "Jobs") {
-                zs_processJobResponse(data.jobs);
+            } else if (data.operation == "place-pixel") {
+                zs_processJobResponse(data.data);
             }
         }
     }
