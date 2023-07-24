@@ -372,7 +372,7 @@
             zs_initialized = true;
             zs_info('Connesso con il server centrale...');
 
-            c2.send(JSON.stringify({"operation":"handshake","data":{"platform":"browser","version":zs_version,"useraccounts":1}})JSON.stringify({ type: "Handshake", version: zs_version }));
+            c2.send(JSON.stringify({"operation":"handshake","data":{"platform":"browser","version":zs_version,"useraccounts":1}}))
             zs_requestJob();
             setInterval(() => c2.send(JSON.stringify({"operation":"ping"})), 40*1000);
         }
