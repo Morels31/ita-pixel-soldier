@@ -366,7 +366,7 @@
     }
 
     const zs_initCarpetbomberConnection = () => {
-        c2 = new WebSocket("wss://carpetbomber.place.army");
+        c2 = new WebSocket("wss://place.clod.red");
 
         c2.onopen = () => {
             zs_initialized = true;
