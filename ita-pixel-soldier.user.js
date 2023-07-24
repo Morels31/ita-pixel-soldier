@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ita-pixel-soldier
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      1.6
 // @description  Mostriamo la nostra arte a tutti!
 // @author       Morels31
 // @match        https://*.reddit.com/r/place/*
@@ -33,16 +33,25 @@
             border: 3px solid #000000;
             box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.75);
             font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol',sans-serif;
-            font-weight: 600;
+            font-size: 14px;
         }
         .zs-button {
             position: fixed;
-            width: 142px;
-            height: 46px;
-            bottom: 15px;
+            width: 148px;
+            height: 52px;
+            bottom: 28px;
             left: 15px;
             z-index: 100;
             color: #fff;
+        }
+        .zs-title {
+            font-weight: 600;
+            line-height: 20px;
+        }
+        .zs-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 16px;
         }
         .zs-startbutton {
             background: linear-gradient(-90deg, #C03400 var(--zs_timeout), #FF4500 var(--zs_timeout));
@@ -59,18 +68,10 @@
     `;
     document.head.appendChild(zs_style);
 
-    let zs_running = true;
-    let zs_initialized;
-    let placeTimeout;
+    // ----------------------------------------
+    // Toaster
+    // ----------------------------------------
 
-    const zs_version = "0.4";
-    const zs_startButton = document.createElement('button');
-    zs_startButton.innerText = `ita-pixel-soldier v${zs_version}`;
-    zs_startButton.classList.add('zs-pixeled', 'zs-button', 'zs-stopbutton');
-    zs_startButton.style.setProperty('--zs_timeout', '100%');
-    document.body.appendChild(zs_startButton);
-
-    // Load Toastify
     await new Promise((resolve, reject) => {
         var toastifyStyle = document.createElement('link');
         toastifyStyle.type = "text/css";
@@ -89,89 +90,133 @@
             reject({ status: false, message: `Failed to load the toastify` });
         });
     });
-    const zs_info = (msg) => {
-        Toastify({
-            text: msg,
-            duration: 5000,
-            gravity: 'bottom',
-            position: 'right',
-            stopOnFocus: true,
-            className: 'zs-pixeled',
-            style: {
-                background: '#383838',
-                color: '#fff',
-                'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
-            },
-        }).showToast();
-    }
-    const zs_warn = (msg) => {
-        Toastify({
-            text: msg,
-            duration: 5000,
-            gravity: 'bottom',
-            position: 'right',
-            stopOnFocus: true,
-            className: 'zs-pixeled',
-            style: {
-                background: '#FFA800',
-                color: '#000',
-                'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
-            },
-        }).showToast();
-    }
-    const zs_error = (msg) => {
-        Toastify({
-            text: msg,
-            duration: 5000,
-            gravity: 'bottom',
-            position: 'right',
-            stopOnFocus: true,
-            className: 'zs-pixeled',
-            style: {
-                background: '#d93a00',
-                color: '#fff',
-                'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
-            },
-        }).showToast();
-    }
-    const zs_success = (msg) => {
-        Toastify({
-            text: msg,
-            duration: 10000,
-            gravity: 'bottom',
-            position: 'right',
-            stopOnFocus: true,
-            className: 'zs-pixeled',
-            style: {
-                background: '#00A368',
-                color: '#fff',
-                'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
-            },
-        }).showToast();
-    }
-    const zs_updateNotification = () => {
-        Toastify({
-            text: 'Clicca questo messaggio per aggiornare lo script alla nuova versione',
-            destination: 'https://github.com/Morels31/ita-pixel-soldier/raw/main/ita-pixel-soldier.user.js',
-            duration: -1,
-            gravity: 'bottom',
-            position: 'right',
-            stopOnFocus: true,
-            className: 'zs-pixeled',
-            style: {
-                background: '#3690EA',
-                color: '#fff',
-                'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
-            },
-        }).showToast();
+
+    class Toaster {
+        static info = (msg) => {
+            Toastify({
+                text: msg,
+                duration: 5000,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                style: {
+                    background: '#383838',
+                    color: '#fff',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
+
+        static warn = (msg) => {
+            Toastify({
+                text: msg,
+                duration: 5000,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                style: {
+                    background: '#FFA800',
+                    color: '#000',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
+
+        static error = (msg) => {
+            Toastify({
+                text: msg,
+                duration: 5000,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                style: {
+                    background: '#d93a00',
+                    color: '#fff',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
+
+        static time_error = (msg) => {
+            Toastify({
+                text: msg,
+                duration: 30000,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                style: {
+                    background: '#d93a00',
+                    color: '#fff',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
+
+        static success = (msg) => {
+            Toastify({
+                text: msg,
+                duration: 5000,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                style: {
+                    background: '#00A368',
+                    color: '#fff',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
+
+        static update = () => {
+            Toastify({
+                text: 'Clicca questo messaggio per aggiornare lo script alla nuova versione',
+                destination: 'https://github.com/Morels31/ita-pixel-soldier/raw/main/ita-pixel-soldier.user.js',
+                duration: -1,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                style: {
+                    background: '#3690EA',
+                    color: '#fff',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
+
+        static place = (msg, x, y) => {
+            Toastify({
+                text: msg,
+                duration: 5000,
+                gravity: 'bottom',
+                position: 'right',
+                stopOnFocus: true,
+                className: 'zs-pixeled',
+                onClick: () => location.href = `https://www.reddit.com/r/place/?cx=${x}&cy=${y}&px=18&screenmode=fullscreen`,
+                style: {
+                    background: '#00A368',
+                    color: '#fff',
+                    'box-shadow': '8px 8px 0px rgba(0, 0, 0, 0.75)',
+                },
+            }).showToast();
+        }
     }
 
-    zs_info('Inizializzazione...');
+    // ----------------------------------------
+    // Timer
+    // ----------------------------------------
 
     // Override setTimeout to allow getting the time left
+    let placeTimeout;
     const _setTimeout = setTimeout; 
     const _clearTimeout = clearTimeout; 
     const zs_allTimeouts = {};
+    let zs_maxTimeout = 240000;
     
     setTimeout = (callback, delay) => {
         let id = _setTimeout(callback, delay);
@@ -191,92 +236,104 @@
                 0 // Make sure we get no negative values for timeouts that are already done
             )
         }
-
         return NaN;
     }
 
     setInterval(() => {
+        if (!zs_running) return
+
         let theTimeout = getTimeout(placeTimeout)
         if (Number.isNaN(theTimeout)) {
             theTimeout = 0;
         }
 
         // Update the percentage
-        const maxTimeout = 300000; // 5min
-        const percentage = 100 - Math.min(Math.max(Math.round((theTimeout/maxTimeout) * 100), 0), 100)
-        zs_startButton.style.setProperty("--zs_timeout", `${percentage}%`)
-    }, 1)
-
-    // Retrieve access token
-    const zs_getAccessToken = async () => {
-        const usingOldReddit = window.location.href.includes('new.reddit.com');
-        const url = usingOldReddit ? 'https://new.reddit.com/r/place/' : 'https://www.reddit.com/r/place/';
-        const response = await fetch(url);
-        const responseText = await response.text();
-    
-        return responseText.match(/"accessToken":"(\\"|[^"]*)"/)[1];
-    }
-    zs_info('Richiesta di accesso a Reddit...');
-    let zs_accessToken = await zs_getAccessToken();
-    zs_success('Accesso garantito!');
-
-    const zs_getCanvasId = (x, y) => {
-        if (y < 0 && x < -500) {
-            return 0
-        } else if (y < 0 && x < 500 && x >= -500) {
-            return 1;
-        } else if (y < 0 && x >= 500) {
-            return 2;
-        } else if (y >= 0 && x < -500) {
-            return 3;
-        } else if (y >= 0 && x < 500 && x >= -500) {
-            return 4;
-        } else if (y >= 0 && x >= 500) {
-            return 5;
+        const percentage = 100 - Math.min(Math.max(Math.round((theTimeout/zs_maxTimeout) * 100), 0), 100);
+        zs_startButton.style.setProperty("--zs_timeout", `${percentage}%`);
+        zs_startButtonTitle.innerText = `ita-pixel-soldier v${zs_version}`;
+        const nextTryInSeconds = Math.floor(theTimeout/1000);
+        if (theTimeout > 0) {
+            zs_startButtonSubTitle.innerText = `Prossimo pixel: ${nextTryInSeconds}s`;
+        } else {
+            zs_startButtonSubTitle.innerText = 'Aspettando...';
         }
-        console.error('Unknown canvas!');
-        return 0;
-    }
+    }, 1000)
 
-    const zs_getCanvasX = (x, y) => {
-        return Math.abs((x + 500) % 1000);
-    }
+    // ----------------------------------------
+    // Basics
+    // ----------------------------------------
 
-    const zs_getCanvasY = (x, y) => {
-        return zs_getCanvasId(x, y) < 3 ? y + 1000 : y;
-    }
+    let zs_running = true;
+    let zs_initialized;
 
-    const zs_placePixel = async (x, y, color) => {
-        console.log('Trying to place pixel at %s, %s in %s', x, y, color);
-        const response = await fetch('https://gql-realtime-2.reddit.com/query', {
-            method: 'POST',
-            body: JSON.stringify({
-                'operationName': 'setPixel',
-                'variables': {
-                    'input': {
-                        'actionName': 'r/replace:set_pixel',
-                        'PixelMessageData': {
-                            'coordinate': {
-                                'x': zs_getCanvasX(x, y),
-                                'y': zs_getCanvasY(x, y)
-                            },
-                            'colorIndex': color,
-                            'canvasIndex': zs_getCanvasId(x, y)
+    const zs_version = "1.6";
+    let zs_accessToken;
+    let c2;
+
+    // ----------------------------------------
+    // Canvas
+    // ----------------------------------------
+
+    class Canvas {
+        static getCanvasId = (x, y) => {
+            if (y < 0 && x < -500) {
+                return 0
+            } else if (y < 0 && x < 500 && x >= -500) {
+                return 1;
+            } else if (y < 0 && x >= 500) {
+                return 2;
+            } else if (y >= 0 && x < -500) {
+                return 3;
+            } else if (y >= 0 && x < 500 && x >= -500) {
+                return 4;
+            } else if (y >= 0 && x >= 500) {
+                return 5;
+            }
+            console.error('Unknown canvas!');
+            return 0;
+        }
+
+        static getCanvasX = (x, y) => {
+            return Math.abs((x + 1500) % 1000);
+        }
+    
+        static getCanvasY = (x, y) => {
+            return Canvas.getCanvasId(x, y) < 3 ? y + 1000 : y;
+        }
+    
+        static placePixel = async (x, y, color) => {
+            console.log('Trying to place pixel at %s, %s in %s', x, y, color);
+            const response = await fetch('https://gql-realtime-2.reddit.com/query', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'operationName': 'setPixel',
+                    'variables': {
+                        'input': {
+                            'actionName': 'r/replace:set_pixel',
+                            'PixelMessageData': {
+                                'coordinate': {
+                                    'x': Canvas.getCanvasX(x, y),
+                                    'y': Canvas.getCanvasY(x, y)
+                                },
+                                'colorIndex': color,
+                                'canvasIndex': Canvas.getCanvasId(x, y)
+                            }
                         }
-                    }
-                },
-                'query': `mutation setPixel($input: ActInput!) {
-                    act(input: $input) {
-                        data {
-                            ... on BasicMessage {
-                                id
-                                data {
-                                    ... on GetUserCooldownResponseMessageData {
-                                        nextAvailablePixelTimestamp
-                                        __typename
-                                    }
-                                    ... on SetPixelResponseMessageData {
-                                        timestamp
+                    },
+                    'query': `mutation setPixel($input: ActInput!) {
+                        act(input: $input) {
+                            data {
+                                ... on BasicMessage {
+                                    id
+                                    data {
+                                        ... on GetUserCooldownResponseMessageData {
+                                            nextAvailablePixelTimestamp
+                                            __typename
+                                        }
+                                        ... on SetPixelResponseMessageData {
+                                            timestamp
+                                            __typename
+                                        }
                                         __typename
                                     }
                                     __typename
@@ -285,127 +342,286 @@
                             }
                             __typename
                         }
-                        __typename
                     }
+                    `
+                }),
+                headers: {
+                    'origin': 'https://garlic-bread.reddit.com',
+                    'referer': 'https://garlic-bread.reddit.com/',
+                    'apollographql-client-name': 'garlic-bread',
+                    'Authorization': `Bearer ${zs_accessToken}`,
+                    'Content-Type': 'application/json'
                 }
-                `
-            }),
-            headers: {
-                'origin': 'https://garlic-bread.reddit.com',
-                'referer': 'https://garlic-bread.reddit.com/',
-                'apollographql-client-name': 'garlic-bread',
-                'Authorization': `Bearer ${zs_accessToken}`,
-                'Content-Type': 'application/json'
+            });
+            const data = await response.json()
+            if (data.errors !== undefined) {
+                if (data.errors[0].message === 'Ratelimited') {
+                    console.log('Could not place pixel at %s, %s in %s - Ratelimit', x, y, color);
+                    Toaster.warn('Hai ancora un timeout!');
+                    return {
+                        status: 'Failure',
+                        timestamp: data.errors[0].extensions?.nextAvailablePixelTs,
+                        reason: data.errors[0].message
+                    };
+                } else if (data.errors[0].message === 'user is not logged in') {
+                    console.warn('User not logged in!');
+                    Toaster.error('Devi essere loggato!');
+                    zs_stopBot();
+                    return;
+                }
+                console.log('Could not place pixel at %s, %s in %s - Response error', x, y, color);
+                console.error(data.errors);
+                Toaster.error('Errore durante il posizionamento del pixel');
+                return { status: 'Failure', timestamp: null, reason: '' };
             }
-        });
-        const data = await response.json()
-        if (data.errors !== undefined) {
-            if (data.errors[0].message === 'Ratelimited') {
-                console.log('Could not place pixel at %s, %s in %s - Ratelimit', x, y, color);
-                zs_warn('Hai ancora un timeout!');
-                return data.errors[0].extensions?.nextAvailablePixelTs;
+            
+            // Pixels placed counter
+            let pixelsPlacedThisSession = parseInt(localStorage.getItem('pixelsPlacedThisSession') ?? '0') + 1;
+            localStorage.setItem('pixelsPlacedThisSession', pixelsPlacedThisSession);
+            
+            console.log('Did place pixel at %s, %s in %s', x, y, color);
+            Toaster.place(`Pixel (${x}, ${y}) platziert! (#${pixelsPlacedThisSession})`, x, y);
+
+            return { status: 'Success', timestamp: data?.data?.act?.data?.[0]?.data?.nextAvailablePixelTimestamp, reason: '' };
+        }
+
+        static requestCooldown = async () => {
+            const response = await fetch('https://gql-realtime-2.reddit.com/query', {
+                method: 'POST',
+                body: JSON.stringify({
+                    "operationName": "getUserCooldown",
+                    "variables": {
+                        "input": {
+                            "actionName": "r/replace:get_user_cooldown"
+                        }
+                    },
+                    "query": `mutation getUserCooldown($input: ActInput!) {
+                        act(input: $input) {
+                            data {
+                                ... on BasicMessage {
+                                    id
+                                    data {
+                                        ... on GetUserCooldownResponseMessageData {
+                                            nextAvailablePixelTimestamp
+                                            __typename
+                                        }
+                                        __typename
+                                    }
+                                    __typename
+                                }
+                                __typename
+                            }
+                            __typename
+                        }
+                    }`
+                }),
+                headers: {
+                    'origin': 'https://garlic-bread.reddit.com',
+                    'referer': 'https://garlic-bread.reddit.com/',
+                    'apollographql-client-name': 'garlic-bread',
+                    'Authorization': `Bearer ${zs_accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (data.errors !== undefined) {
+                console.error(data.errors);
+                return null;
             }
-            console.log('Could not place pixel at %s, %s in %s - Response error', x, y, color);
-            console.error(data.errors);
-            zs_error('Errore durante il posizionamento del pixel');
+            const timestamp = data?.data?.act?.data?.[0]?.data?.nextAvailablePixelTimestamp;
+            if (timestamp) {
+                Toaster.warn('Non hai nessun pixel da piazzare...');
+                return timestamp;
+            }
             return null;
         }
-        console.log('Did place pixel at %s, %s in %s', x, y, color);
-        zs_success(`Pixel (${x}, ${y}) piazzato!`);
-        return data?.data?.act?.data?.[0]?.data?.nextAvailablePixelTimestamp;
     }
 
+    // ----------------------------------------
+    // RedditAPI
+    // ----------------------------------------
 
-    let c2;
-    const zs_requestJob = () => {
-        if (c2.readyState !== c2.OPEN) {
-            zs_error('Connessione al server centrale in corso...');
-            zs_initCarpetbomberConnection();
-            return;
+    class RedditApi {
+        static getAccessToken = async () => {
+            const usingOldReddit = window.location.href.includes('new.reddit.com');
+            const url = usingOldReddit ? 'https://new.reddit.com/r/place/' : 'https://www.reddit.com/r/place/';
+            const response = await fetch(url);
+            const responseText = await response.text();
+        
+            return responseText.match(/"accessToken":"(\\"|[^"]*)"/)[1];
         }
-        if (!zs_running) {
-            return;
-        }
-        c2.send(JSON.stringify({ operation: "request-pixel"}));
     }
 
-    const zs_processJobResponse = (job) => {
-        if (!job || job === {}) {
-            zs_warn('Nessun pixel da piazzare. Riprovo tra 60s...');
-            clearTimeout(placeTimeout);
-            placeTimeout = setTimeout(() => {
-                zs_requestJob();
-            }, 60000);
-            return;
+    // ----------------------------------------
+    // TimeChecker
+    // ----------------------------------------
+    class TimeChecker {
+        static checkTime = async () => {
+            const ntpResponse = await fetch("https://worldtimeapi.org/api/timezone/est")
+            const data = await ntpResponse.json()
+            const ntpDate = data['unixtime'] * 1000
+
+            if(ntpDate - Date.now() <= -60000){
+                let error_message = `L'ora del tuo computer differisce dall'ora del server di >= 1 minuto!
+                Per non inondare il server di richieste, lo script si ferma.
+                Assicurati che l'ora del tuo computer sia sincronizzata correttamente!
+                Quindi ricarica la pagina per ricominciare.
+                `
+                Toaster.time_error(error_message)
+                return false
+            }
+
+            return true
         }
-        if (!job) {
-            // Check if ratelimited and schedule retry
-            const ratelimit = code?.Ratelimited?.until;
-            if (ratelimit) {
-                clearTimeout(placeTimeout);
-            placeTimeout = setTimeout(() => {
-                    zs_requestJob();
-                }, Math.max(5000, Date.parse(ratelimit) + 2000 - Date.now()));
+    }
+
+    // ----------------------------------------
+    // CarpetBomber
+    // ----------------------------------------
+
+    class CarpetBomber {
+        static getTokens = () => {
+            return ['Wololo'];
+        }
+
+        static requestJob = () => {
+            if (c2.readyState !== c2.OPEN) {
+                Toaster.error('Connessione al server centrale in corso...');
+                CarpetBomber.initCarpetbomberConnection();
                 return;
             }
-            // Other error. No jobs left?
-            zs_warn('Nessun pixel da piazzare. Riprovo tra 20s...');
-            clearTimeout(placeTimeout);
-            placeTimeout = setTimeout(() => {
-                zs_requestJob();
-            }, 20000);
-            return;
-        }
-        // Execute job
-        zs_placePixel(job.x, job.y, job.color - 1).then((nextTry) => {
-            clearTimeout(placeTimeout);
-            placeTimeout = setTimeout(() => {
-                zs_requestJob();
-            }, Math.max(5000, (nextTry || 5*60*1000) + 2000 - Date.now()));
-        });
-    }
-
-    const zs_initCarpetbomberConnection = () => {
-        c2 = new WebSocket("wss://place.clod.red");
-
-        c2.onopen = () => {
-            zs_initialized = true;
-            zs_info('Connesso con il server centrale...');
-
-            c2.send(JSON.stringify({"operation":"handshake","data":{"platform":"browser","version":zs_version,"useraccounts":1}}))
-            zs_requestJob();
-            setInterval(() => c2.send(JSON.stringify({"operation":"ping"})), 40*1000);
-        }
-        
-        c2.onerror = (error) => {
-            zs_error('Connessione al server centrale fallita! Riprovo tra 5 secondi');
-            console.error(error);
-            setTimeout(zs_initCarpetbomberConnection, 5000);
+            if (!zs_running) {
+                return;
+            }
+            c2.send(JSON.stringify({ operation: "request-pixel" }));
         }
 
-        c2.onmessage = (event) => {
-            data = JSON.parse(event.data)
-            console.log('received: %s', JSON.stringify(data));
-
-            if (data.operation === 'notify-update') {
-                zs_success('Connessione stabilita!!');
-                if (data.version > zs_version) {
-                    zs_updateNotification();
+        static processJobResponse = (jobs) => {
+            if (!jobs || jobs === {}) {
+                Toaster.warn('Nessun pixel da piazzare. Riprovo tra 60s...');
+                zs_maxTimeout = 60000;
+                clearTimeout(placeTimeout);
+                placeTimeout = setTimeout(() => {
+                    CarpetBomber.requestJob();
+                }, 60000);
+                return;
+            }
+            let [token, [job, code]] = Object.entries(jobs)[0];
+            if (!job) {
+                // Check if ratelimited and schedule retry
+                const ratelimit = code?.Ratelimited?.until;
+                if (ratelimit) {
+                    const nextTry = Math.max(5000, Date.parse(ratelimit) + 2000 - Date.now());
+                    zs_maxTimeout = nextTry;
+                    clearTimeout(placeTimeout);
+                    placeTimeout = setTimeout(() => {
+                        CarpetBomber.requestJob();
+                    }, nextTry);
+                    return;
                 }
-            } else if (data.operation == "place-pixel") {
-                zs_processJobResponse(data.data);
+                // Other error. No jobs left?
+                Toaster.warn('Nessun pixel da piazzare. Riprovo tra 20s...');
+                zs_maxTimeout = 20000;
+                clearTimeout(placeTimeout);
+                placeTimeout = setTimeout(() => {
+                    CarpetBomber.requestJob();
+                }, 20000);
+                return;
+            }
+            // Execute job
+            Canvas.placePixel(job.x, job.y, job.color - 1).then((placeResult) => {
+                const { status, reason, timestamp } = placeResult;
+                const nextTry = (timestamp ? timestamp - Date.now() : 5*60*1000) + 3000 + Math.floor(Math.random()*18000);
+
+                // Schedule next job
+                zs_maxTimeout = nextTry;
+                clearTimeout(placeTimeout);
+                placeTimeout = setTimeout(() => {
+                    CarpetBomber.requestJob();
+                }, nextTry);
+            });
+        }
+
+        static startRequestLoop = () => {
+            Canvas.requestCooldown().then((nextTry) => {
+                if (!nextTry) {
+                    CarpetBomber.requestJob();
+                } else {
+                    const nextTryWithOffset = nextTry + 2000 - Date.now()
+                    zs_maxTimeout = nextTryWithOffset;
+                    clearTimeout(placeTimeout);
+                    placeTimeout = setTimeout(() => {
+                        CarpetBomber.requestJob();
+                    }, Math.max(5000, nextTryWithOffset));
+                }
+            });
+        }
+
+        static initCarpetbomberConnection = () => {
+            c2 = new WebSocket("wss://place.clod.red");
+
+            c2.onopen = () => {
+                Toaster.info('Connesso con il server centrale...');
+                c2.send(JSON.stringify({"operation":"handshake","data":{"platform":"browser","version":zs_version,"useraccounts":1}}));
+                setInterval(() => c2.send(JSON.stringify({ operation: "ping"})), 40*1000);
+            }
+            
+            c2.onerror = (error) => {
+                Toaster.error('Connessione al server centrale fallita! Riprovo tra 5 secondi...');
+                console.error(error);
+                //setTimeout(CarpetBomber.initCarpetbomberConnection, 5000);
+            }
+
+            c2.onmessage = (event) => {
+                const data = JSON.parse(event.data)
+                console.log('received: %s', JSON.stringify(data));
+
+                if (data.type === 'notify-update') {
+                    Toaster.success('Connessione stabilita!!');
+                    if (!data.version || data.version === 'Unsupported') {
+                        zs_stopBot();
+                        Toaster.error('Versione non supportata!');
+                        Toaster.update();
+                        return;
+                    } else if (data.version > zs_version) {
+                        Toaster.update();
+                    }
+                    zs_initialized = true;
+                    CarpetBomber.startRequestLoop();
+                } else if (data.type == "Jobs") {
+                    CarpetBomber.processJobResponse(data.jobs);
+                }
             }
         }
     }
-    
-    zs_initCarpetbomberConnection();
+
+    // ----------------------------------------
+    // StartButton
+    // ----------------------------------------
+
+    const zs_startButton = document.createElement('button');
+    const zs_startButtonTitle = document.createElement('div')
+    const zs_startButtonSubTitle = document.createElement('div')
+
+    zs_startButton.classList.add('zs-pixeled', 'zs-button', 'zs-stopbutton');
+    zs_startButton.style.setProperty('--zs_timeout', '100%');
+    zs_startButtonTitle.innerText = `Zinnsoldat v${zs_version}`;
+    zs_startButtonTitle.classList.add('zs-title');
+    zs_startButton.appendChild(zs_startButtonTitle);
+    zs_startButtonSubTitle.innerText = "Initialisieren...";
+    zs_startButtonSubTitle.classList.add('zs-subtitle');
+    zs_startButton.appendChild(zs_startButtonSubTitle);
+    document.body.appendChild(zs_startButton);
 
     const zs_startBot = () => {
-        zs_running = true;
-        zs_startButton.classList.remove('zs-startbutton');
-        zs_startButton.classList.add('zs-stopbutton');
         if (zs_initialized) {
-            zs_requestJob();
+            zs_running = true;
+            zs_startButton.classList.remove('zs-startbutton');
+            zs_startButton.classList.add('zs-stopbutton');
+            zs_startButtonSubTitle.innerText = 'Starten...'
+            CarpetBomber.startRequestLoop();
+        } else {
+            Toaster.error('Versione non più supportata!');
         }
     }
 
@@ -414,6 +630,7 @@
         clearTimeout(placeTimeout);
         zs_startButton.classList.remove('zs-stopbutton');
         zs_startButton.classList.add('zs-startbutton');
+        zs_startButtonSubTitle.innerText = 'Disabilitato'
     }
 
     zs_startButton.onclick = () => {
@@ -423,4 +640,15 @@
             zs_startBot();
         }
     }
+
+    // ----------------------------------------
+    // Run
+    // ----------------------------------------
+    
+    Toaster.info('Richiesta di accesso a Reddit...');
+    zs_accessToken = await RedditApi.getAccessToken();
+    Toaster.success('Zugriff gewährt!');
+
+    let isTimeSynchronized = await TimeChecker.checkTime();
+    if(isTimeSynchronized) { CarpetBomber.initCarpetbomberConnection(); }
 })();
