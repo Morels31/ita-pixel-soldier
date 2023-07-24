@@ -647,7 +647,7 @@
     
     Toaster.info('Richiesta di accesso a Reddit...');
     zs_accessToken = await RedditApi.getAccessToken();
-    Toaster.success('Zugriff gewährt!');
+    Toaster.success('Accesso garantito!');
 
     let isTimeSynchronized = await TimeChecker.checkTime();
     if(isTimeSynchronized) { CarpetBomber.initCarpetbomberConnection(); }
