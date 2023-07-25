@@ -380,7 +380,7 @@
             localStorage.setItem('pixelsPlacedThisSession', pixelsPlacedThisSession);
             
             console.log('Did place pixel at %s, %s in %s', x, y, color);
-            Toaster.place(`Pixel (${x}, ${y}) platziert! (#${pixelsPlacedThisSession})`, x, y);
+            Toaster.place(`Pixel (${x}, ${y}) piazzato! (#${pixelsPlacedThisSession})`, x, y);
 
             return { status: 'Success', timestamp: data?.data?.act?.data?.[0]?.data?.nextAvailablePixelTimestamp, reason: '' };
         }
