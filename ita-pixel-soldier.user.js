@@ -496,8 +496,8 @@
             c2.send(JSON.stringify({ operation: "request-pixel" }));
         }
 
-        static processJobResponse = (jobs) => {
-            if (!jobs || jobs === {}) {
+        static processJobResponse = (job) => {
+            if (!job || job === {}) {
                 Toaster.warn('Nessun pixel da piazzare. Riprovo tra 60s...');
                 zs_maxTimeout = 60000;
                 clearTimeout(placeTimeout);
@@ -506,21 +506,9 @@
                 }, 60000);
                 return;
             }
-            let [token, [job, code]] = Object.entries(jobs)[0];
-            if (!job) {
-                // Check if ratelimited and schedule retry
-                const ratelimit = code?.Ratelimited?.until;
-                if (ratelimit) {
-                    const nextTry = Math.max(5000, Date.parse(ratelimit) + 2000 - Date.now());
-                    zs_maxTimeout = nextTry;
-                    clearTimeout(placeTimeout);
-                    placeTimeout = setTimeout(() => {
-                        CarpetBomber.requestJob();
-                    }, nextTry);
-                    return;
-                }
-                // Other error. No jobs left?
-                Toaster.warn('Nessun pixel da piazzare. Riprovo tra 20s...');
+            if (!job.x || !job.y || !job.color) {
+                // Starnge error
+                Toaster.warn('Errore strano, riprovo tra 20s...');
                 zs_maxTimeout = 20000;
                 clearTimeout(placeTimeout);
                 placeTimeout = setTimeout(() => {
