@@ -605,10 +605,10 @@
 
     zs_startButton.classList.add('zs-pixeled', 'zs-button', 'zs-stopbutton');
     zs_startButton.style.setProperty('--zs_timeout', '100%');
-    zs_startButtonTitle.innerText = `Zinnsoldat v${zs_version}`;
+    zs_startButtonTitle.innerText = `ita-pixel-soldier v${zs_version}`;
     zs_startButtonTitle.classList.add('zs-title');
     zs_startButton.appendChild(zs_startButtonTitle);
-    zs_startButtonSubTitle.innerText = "Initialisieren...";
+    zs_startButtonSubTitle.innerText = "Inizializzazione...";
     zs_startButtonSubTitle.classList.add('zs-subtitle');
     zs_startButton.appendChild(zs_startButtonSubTitle);
     document.body.appendChild(zs_startButton);
@@ -618,7 +618,7 @@
             zs_running = true;
             zs_startButton.classList.remove('zs-startbutton');
             zs_startButton.classList.add('zs-stopbutton');
-            zs_startButtonSubTitle.innerText = 'Starten...'
+            zs_startButtonSubTitle.innerText = 'Inizializzazione...'
             CarpetBomber.startRequestLoop();
         } else {
             Toaster.error('Versione non più supportata!');
