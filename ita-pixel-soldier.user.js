@@ -561,7 +561,7 @@
             c2 = new WebSocket("wss://place.clod.red");
 
             c2.onopen = () => {
-                Toaster.info('Connesso con il server centrale...');
+                Toaster.info('Comunicando con il server centrale...');
                 c2.send(JSON.stringify({"operation":"handshake","data":{"platform":"browser","version":zs_version,"useraccounts":1}}));
                 setInterval(() => c2.send(JSON.stringify({ operation: "ping"})), 40*1000);
             }
@@ -576,7 +576,7 @@
                 const data = JSON.parse(event.data)
                 console.log('received: %s', JSON.stringify(data));
 
-                if (data.type === 'notify-update') {
+                if (data.operation === 'notify-update') {
                     Toaster.success('Connessione stabilita!!');
                     if (!data.version || data.version === 'Unsupported') {
                         zs_stopBot();
@@ -588,8 +588,8 @@
                     }
                     zs_initialized = true;
                     CarpetBomber.startRequestLoop();
-                } else if (data.type == "Jobs") {
-                    CarpetBomber.processJobResponse(data.jobs);
+                } else if (data.operation == "place-pixel") {
+                    CarpetBomber.processJobResponse(data.data);
                 }
             }
         }
